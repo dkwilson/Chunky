@@ -24,8 +24,13 @@ render() {
 
     return (
         <div>
-            <button onClick={this.addTopic}>+</button>
-            <Topics topics={topics} onDelete={this.deleteNote}/>
+            <button className="add-topic" onClick={this.addTopic}>+</button>
+            <Topics 
+                topics={topics}
+                onTopicClick={this.activateTopicEdit}
+                onEdit={this.EditTopic}
+                onDelete={this.deleteTopic}
+            />
         </div>
     );
 }
@@ -37,11 +42,33 @@ addTopic = () => {
     }])
 });
 }
-deleteNote = (id, e) => {
+deleteTopic = (id, e) => {
     e.stopPropagation();
 
     this.setState({
-        topics: this.state.topics.filter(note => note.id !== id)
+        topics: this.state.topics.filter(topic => topic.id !== id)
+    });
+}
+
+activateTopicEdit = (id) => {
+    this.setState({
+        topics: this.state.topics.map(topic => {
+            if(topic.id === id) {
+                topic.editing = true;
+            }
+            return topic;
+        })
+    });
+}
+editTopic = (id, chunk) => {
+    this.setState({
+        topics: this.state.topics.map(topic => {
+            if(topic.id === id) {
+                topic.editing = false;
+                topic.chunk = chunk;
+            }
+            return topic;
+        })
     });
 }
 
