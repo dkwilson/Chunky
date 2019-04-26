@@ -1,19 +1,9 @@
-import uuid from 'uuid';
 import TopicActions from '../actions/TopicActions';
 
 export default class TopicStore {
     constructor() {
         this.bindActions(TopicActions)
-        this.topics = [
-            {
-                id: uuid.v4(),
-                chunk: 'learn React'
-            },
-            {
-                id: uuid.v4(),
-                chunk: 'jsx'
-            }
-        ];
+        this.topics = [];
     }
 
 create(topic) {
@@ -21,11 +11,20 @@ create(topic) {
         topics: this.topics.concat(topic)
     })
 }
-update(updateTopic) {
-    console.log('update topic', updateTopic);
+update(updatedTopic) {
+    this.setState({
+        topics: this.topics.map(topic => {
+            if(topic.id === updatedTopic.id) {
+                return Object.assign({}, topic, updatedTopic);
+            }
+            return topic;
+        })
+    });
 }
 delete(id) {
-    console.log('delete topic', id);
+    this.setState({
+        topics: this.topics.filter(topic => topic.id !== id)
+    });
 }
 }
 

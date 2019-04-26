@@ -1,26 +1,13 @@
 import React from 'react';
 import uuid from 'uuid';
 import Topics from './Topics';
+import connect from '../libs/connect';
+import TopicActions from '../actions/TopicActions';
 
-export default class App extends React.Component {
-    constructor(props) {
-        super(props);
-    
-        this.state = {
-            topics: [
-            {
-                id: uuid.v4(),
-                chunk: 'react'
-            },
-            {
-                id: uuid.v4(),
-                chunk: 'jsx'
-            }
-        ]
-    };
-}
+class App extends React.Component {
+
 render() {
-    const { topics } = this.state;
+    const { topics } = this.props;
 
     return (
         <div>
@@ -35,41 +22,29 @@ render() {
     );
 }
 addTopic = () => {
-    this.setState({
-    topics: this.state.topics.concat([{
+    this.props.TopicActions.create({
         id: uuid.v4(),
         chunk: 'New Chunk'
-    }])
-});
+    });
 }
+
 deleteTopic = (id, e) => {
     e.stopPropagation();
 
-    this.setState({
-        topics: this.state.topics.filter(topic => topic.id !== id)
-    });
+    this.props.TopicActions.delete(id);
 }
 
 activateTopicEdit = (id) => {
-    this.setState({
-        topics: this.state.topics.map(topic => {
-            if(topic.id === id) {
-                topic.editing = true;
-            }
-            return topic;
-        })
-    });
+    this.props.TopicActions.update({id, editing: true});
 }
 editTopic = (id, chunk) => {
-    this.setState({
-        topics: this.state.topics.map(topic => {
-            if(topic.id === id) {
-                topic.editing = false;
-                topic.chunk = chunk;
-            }
-            return topic;
-        })
-    });
+    this.props.TopicActions.update({id, chunk, editing: false});
 }
 
 }
+
+export default connect(( {topics} ) => ({
+    topics
+}), {
+    TopicActions
+})(App)
